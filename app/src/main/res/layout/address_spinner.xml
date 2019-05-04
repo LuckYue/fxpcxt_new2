@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_marginLeft="21dp"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:id="@+id/linearLayout5">
+
+        <Spinner
+            android:id="@+id/province_spinner"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:paddingTop="0dp"
+            android:paddingBottom="0dp">
+
+        </Spinner>
+
+        <Spinner
+            android:paddingTop="0dp"
+            android:paddingBottom="0dp"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:id="@+id/city_spinner"
+            android:layout_weight="1">
+
+        </Spinner>
+
+        <Spinner
+            android:paddingTop="0dp"
+            android:paddingBottom="0dp"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:id="@+id/county_spinner"
+            android:layout_weight="1">
+
+        </Spinner>
+    </LinearLayout>
+</RelativeLayout>
