@@ -11,6 +11,7 @@ import com.example.a1917.fxpcxt_new.entity.User;
 import com.google.gson.Gson;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -58,7 +59,10 @@ public class AddUserActivity extends AppCompatActivity {
     public static final MediaType JSON = MediaType.parse("application/json;charset=utf-8");
 
     public String save(String url, String json) throws IOException {
-        OkHttpClient client = new OkHttpClient();
+        OkHttpClient client=new OkHttpClient.Builder()
+                .connectTimeout(180,TimeUnit.SECONDS)
+                .readTimeout(180,TimeUnit.SECONDS)
+                .build();
         RequestBody body = RequestBody.create(JSON, json);
         Request request = new Request.Builder()
                 .url(url)

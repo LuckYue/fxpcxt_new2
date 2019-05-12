@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.a1917.fxpcxt_new.R;
@@ -31,9 +32,10 @@ import okhttp3.Response;
 public class MainActivity extends AppCompatActivity {
     private Button btnLogin;
     private EditText etUserName, etPassword;
+    private TextView faceLogin;
     private OkHttpClient client = new OkHttpClient.Builder()
-            .connectTimeout(60,TimeUnit.SECONDS)
-            .readTimeout(60,TimeUnit.SECONDS)
+            .connectTimeout(180,TimeUnit.SECONDS)
+            .readTimeout(180,TimeUnit.SECONDS)
             .build();
     @SuppressLint("HandlerLeak")
     private Handler mHandler = new Handler() {
@@ -59,6 +61,7 @@ public class MainActivity extends AppCompatActivity {
         etUserName = findViewById(R.id.userName);
         etPassword = findViewById(R.id.password);
         btnLogin = findViewById(R.id.btn_login);
+        faceLogin=findViewById(R.id.faceLogin);
         initListener();
     }
 
@@ -78,6 +81,13 @@ public class MainActivity extends AppCompatActivity {
                     return;
                 }
                 login(userName, password);
+            }
+        });
+        faceLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent=new Intent(MainActivity.this,FaceJudgeActivity.class);
+                startActivity(intent);
             }
         });
     }

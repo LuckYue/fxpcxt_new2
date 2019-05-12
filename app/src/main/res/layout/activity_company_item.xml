@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".AddCompanyActivity">
-    <!--<LinearLayout
+    tools:context=".CompanyItemActivity">
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
@@ -15,12 +16,12 @@
             android:layout_weight="2"
             android:text="企业编号："
             android:textSize="24sp"/>
-        <EditText
-            android:id="@+id/add_company_id"
+        <TextView
+            android:id="@+id/company_id"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"/>
-    </LinearLayout>-->
+    </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -32,8 +33,8 @@
             android:layout_weight="2"
             android:text="企业名字："
             android:textSize="24sp"/>
-        <EditText
-            android:id="@+id/add_company_name"
+        <TextView
+            android:id="@+id/company_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"/>
@@ -50,7 +51,7 @@
             android:text="联系人："
             android:textSize="24sp"/>
         <EditText
-            android:id="@+id/add_company_linkman"
+            android:id="@+id/company_linkman"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"/>
@@ -67,7 +68,7 @@
             android:text="联系电话："
             android:textSize="24sp"/>
         <EditText
-            android:id="@+id/add_company_phone"
+            android:id="@+id/company_phone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"/>
@@ -84,7 +85,7 @@
             android:text="地址："
             android:textSize="24sp"/>
         <TextView
-            android:id="@+id/add_company_address"
+            android:id="@+id/company_address"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"/>
@@ -101,7 +102,7 @@
             android:text="成立时间："
             android:textSize="24sp"/>
         <TextView
-            android:id="@+id/add_company_fundTime"
+            android:id="@+id/company_fundTime"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"/>
@@ -118,7 +119,7 @@
             android:text="员工数："
             android:textSize="24sp"/>
         <EditText
-            android:id="@+id/add_company_workers"
+            android:id="@+id/company_workers"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"/>
@@ -134,8 +135,8 @@
             android:layout_weight="2"
             android:text="行业名："
             android:textSize="24sp"/>
-        <EditText
-            android:id="@+id/add_company_industryName"
+        <TextView
+            android:id="@+id/company_industryName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"/>
@@ -151,8 +152,8 @@
             android:layout_weight="2"
             android:text="法人："
             android:textSize="24sp"/>
-        <EditText
-            android:id="@+id/add_company_ower"
+        <TextView
+            android:id="@+id/company_ower"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"/>
@@ -168,8 +169,8 @@
             android:layout_weight="2"
             android:text="法人职位："
             android:textSize="24sp"/>
-        <EditText
-            android:id="@+id/add_company_owerPost"
+        <TextView
+            android:id="@+id/company_owerPost"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"/>
@@ -185,8 +186,8 @@
             android:layout_weight="2"
             android:text="法人电话："
             android:textSize="24sp"/>
-        <EditText
-            android:id="@+id/add_company_owerPhone"
+        <TextView
+            android:id="@+id/company_owerPhone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"/>
@@ -202,18 +203,28 @@
             android:layout_weight="2"
             android:text="法人办公室："
             android:textSize="24sp"/>
-        <EditText
-            android:id="@+id/add_company_owerOffice"
+        <TextView
+            android:id="@+id/company_owerOffice"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"/>
     </LinearLayout>
-
-    <Button
-    android:id="@+id/add_company_save"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:text="保存"
-    />
-
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:orientation="horizontal">
+        <Button
+            android:id="@+id/company_save"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="保存"
+            android:layout_weight="1"/>
+        <Button
+            android:id="@+id/company_delete"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="删除"
+            android:layout_weight="1"/>
+    </LinearLayout>
 </LinearLayout>

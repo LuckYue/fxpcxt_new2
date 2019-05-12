@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".FaceJudgeActivity">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="请把你的脸放在摄像头前面"
+            android:textColor="#008577"
+            android:textSize="18sp"
+            android:gravity="center"/>
+        <SurfaceView
+            android:layout_width="240dp"
+            android:layout_height="320dp"
+            android:id="@+id/surface_view"
+            />
+
+        <!--<FrameLayout-->
+        <!--android:layout_width="150dp"-->
+        <!--android:layout_height="150dp"-->
+        <!--android:id="@+id/frame"-->
+        <!--&gt;</FrameLayout>-->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/btn"
+                android:text="打开相机"/>
+
+            <Button
+                android:id="@+id/surface_login"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="确认登录"
+                android:layout_below="@id/surface_login"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+</RelativeLayout>

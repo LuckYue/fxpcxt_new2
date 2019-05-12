@@ -20,7 +20,7 @@ public class User implements Serializable {
 	 */
 	private Long unitId;
 	private String unitName;
-
+	private String enterprise;
 	public User(){
 
 	}

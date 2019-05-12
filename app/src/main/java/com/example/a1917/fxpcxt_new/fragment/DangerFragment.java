@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.a1917.fxpcxt_new.AddDangerActivity;
 import com.example.a1917.fxpcxt_new.DangerItemActivity;
@@ -54,10 +55,9 @@ public class DangerFragment extends Fragment {
     private Button btn_addDangerRecord;
     private Spinner spinner;
     private List<String> spinnerText;
-    private List<HazardClearRecords> hListAll;
+    //private List<HazardClearRecords> hListAll;
     private List<HazardClearRecords> hList;
     public DangerFragment() {
-        // Required empty public constructor
     }
 
 
@@ -71,13 +71,8 @@ public class DangerFragment extends Fragment {
         spinner=view.findViewById(R.id.spinner);
         spinnerText=new ArrayList<String>();
         qiyexinxi=view.findViewById(R.id.spinnreText);
-        spinnerText.add("卢傻逼");
-        spinnerText.add("1");
-        spinnerText.add("2");
-        spinnerText.add("3");
-//        selectEnterprise();
-        //ArrayAdapter<String> show=new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item,spinnerText);
-        ArrayAdapter<String> show=new ArrayAdapter<String>(getActivity(),android.R.layout.simple_spinner_item,spinnerText);
+        selectEnterprise();
+        ArrayAdapter<String> show=new ArrayAdapter<String>(mContext,android.R.layout.simple_spinner_item,spinnerText);
         //获取后台数据进行展示,
         show.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(show);
@@ -126,7 +121,7 @@ public class DangerFragment extends Fragment {
                     spinnerText.add(enterprises.get(i).getName());
                     Log.e("展示所有企业",spinnerText.get(i).toString());
                 }
-                qiyexinxi.setText("企业信息");
+                //qiyexinxi.setText("企业信息");
                 ArrayAdapter<String> show=new ArrayAdapter<String>(getActivity(),android.R.layout.simple_spinner_dropdown_item,spinnerText);
                 //获取后台数据进行展示
                 show.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -135,7 +130,7 @@ public class DangerFragment extends Fragment {
         });
     }
     //触发事件
-    /*@Override
+    @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         View view=getView();
@@ -145,17 +140,11 @@ public class DangerFragment extends Fragment {
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 //下拉触发之后，根据企业名连接后台接口，找出相应的信息进行展示
                 String selected=spinnerText.get(i);
+                Log.e("打印下拉列表选中数据",selected);
                 hList=new ArrayList<>();
                 mData=new LinkedList<HazardClearRecords>();
                 showEnterpriseHazardRecords(selected);
                 //获取记录信息进行展示
-
-                //dangerList=view.findViewById(R.id.dangerList_fragment);
-
-                dangerAdapter=new DangerAdapter((LinkedList<HazardClearRecords>) mData,mContext);
-                //Log.e("打印获取数据",mData.get(0).toString());
-//                Log.e("打印dangerList",new Gson().toJson(dangerList));
-                dangerList.setAdapter(dangerAdapter);
                 dangerList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
                     @Override
                     public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -171,24 +160,9 @@ public class DangerFragment extends Fragment {
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
-                hListAll = new ArrayList<>();
-                mData=new LinkedList<HazardClearRecords>();
-                //下拉列表无选中时，展示所有的隐患排查信息
-                showAllRecords();
-                //获取记录信息进行展示
-
-                mData=new LinkedList<HazardClearRecords>();
-                //dangerList=view.findViewById(R.id.dangerList_fragment);
-                dangerAdapter=new DangerAdapter((LinkedList<HazardClearRecords>) mData,mContext);
-                dangerList.setAdapter(dangerAdapter);
                 dangerList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
                     @Override
                     public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-                        Bundle bundle=new Bundle();
-                        bundle.putSerializable("hazardClearRecords",(HazardClearRecords)dangerAdapter.getItem(i));
-                        Intent intent=new Intent(mContext,DangerItemActivity.class);
-                        intent.putExtras(bundle);
-                        startActivity(intent);
                         return false;
                     }
                 });
@@ -205,7 +179,7 @@ public class DangerFragment extends Fragment {
 
             }
         });
-    }*/
+    }
     //根据企业名连接后台
     public void showEnterpriseHazardRecords(String enterpriseName){
         new Thread(new Runnable() {
@@ -249,12 +223,17 @@ public class DangerFragment extends Fragment {
                     for(HazardClearRecords h:list)
                         mData.add(h);
                     Log.e("打印获取数据",mData.get(0).toString());
+                    dangerAdapter=new DangerAdapter((LinkedList<HazardClearRecords>) mData,mContext);
+                    dangerList.setAdapter(dangerAdapter);
+                }else{
+                    dangerAdapter=new DangerAdapter((LinkedList<HazardClearRecords>) new LinkedList<HazardClearRecords>() ,mContext);
+                    dangerList.setAdapter(dangerAdapter);
+                    Toast.makeText(mContext, "该企业暂无隐患记录", Toast.LENGTH_SHORT).show();
                 }
-
             }
         });
     }
-    //连接后台获取所有记录信息
+    /*//连接后台获取所有记录信息
     public void showAllRecords(){
         new Thread(new Runnable() {
             @Override
@@ -267,8 +246,8 @@ public class DangerFragment extends Fragment {
                 }
             }
         }).start();
-    }
-    public  List<HazardClearRecords> showAll(String url)throws IOException{
+    }*/
+    /*public  List<HazardClearRecords> showAll(String url)throws IOException{
         OkHttpClient client=new OkHttpClient();
         Request request=new Request.Builder()
                 .url(url)
@@ -285,14 +264,16 @@ public class DangerFragment extends Fragment {
             return null;
         }
 
-    }
-    public void showAll(List<HazardClearRecords> list){
+    }*/
+   /* public void showAll(List<HazardClearRecords> list){
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 for(HazardClearRecords h:list)
                     mData.add(h);
+                dangerAdapter=new DangerAdapter((LinkedList<HazardClearRecords>) mData,mContext);
+                dangerList.setAdapter(dangerAdapter);
             }
         });
-    }
+    }*/
 }

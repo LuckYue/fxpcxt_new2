@@ -1,11 +1,13 @@
 package com.example.a1917.fxpcxt_new.entity;
 
-public class Enterprise {
+import java.io.Serializable;
+
+public class Enterprise implements Serializable {
 	private Long id;
 	private Long zoneId;
 	private String zoneName;
 	private String name;
-	private String Linkman;
+	private String linkman;
 	private String address;
 	private String phone;
 	private String fundTime;
@@ -102,10 +104,10 @@ public class Enterprise {
 		this.zoneName = zoneName;
 	}
 	public String getLinkman() {
-		return Linkman;
+		return linkman;
 	}
 	public void setLinkman(String linkman) {
-		Linkman = linkman;
+		linkman = linkman;
 	}
 	public String getIndustryName() {
 		return industryName;

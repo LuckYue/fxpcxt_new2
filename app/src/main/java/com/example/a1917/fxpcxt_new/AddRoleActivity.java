@@ -18,6 +18,7 @@ import com.google.gson.reflect.TypeToken;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -84,7 +85,10 @@ public class AddRoleActivity extends AppCompatActivity {
     }
     public static final MediaType JSON = MediaType.parse("application/json;charset=utf-8");
     public String save(String url,String json) throws IOException{
-        OkHttpClient client=new OkHttpClient();
+        OkHttpClient client=new OkHttpClient.Builder()
+                .connectTimeout(180,TimeUnit.SECONDS)
+                .readTimeout(180,TimeUnit.SECONDS)
+                .build();
         RequestBody body=RequestBody.create(JSON,json);
         Request request=new Request.Builder()
                 .url(url)
@@ -143,7 +147,10 @@ public class AddRoleActivity extends AppCompatActivity {
     }
 
     public  List<Function> selectAll(String url) throws IOException {
-        OkHttpClient client=new OkHttpClient();
+        OkHttpClient client=new OkHttpClient.Builder()
+                .connectTimeout(180,TimeUnit.SECONDS)
+                .readTimeout(180,TimeUnit.SECONDS)
+                .build();
         Request request=new Request.Builder()
                 .url(url)
                 .build();

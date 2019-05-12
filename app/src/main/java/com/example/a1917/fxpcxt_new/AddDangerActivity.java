@@ -21,6 +21,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
@@ -41,8 +42,10 @@ import com.zhy.base.fileprovider.FileProvider7;
 import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.MediaType;
+import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -51,30 +54,47 @@ import okhttp3.Response;
 public class AddDangerActivity extends AppCompatActivity {
     private EditText add_danger_hazardName,add_danger_enterpriseNmae,add_danger_checkerName,add_danger_checkReception;
     private ImageView add_danger_checkImage;
-    private Button add_danger_save;
+    private Button add_danger_save;//add_uploadCheckImage;
     HazardClearRecords hazardClearRecords=new HazardClearRecords();
     //private final static int RESULT_LOAD_IMAGE=1;
     //private final static int RESULT_CAMERA_IMAGE=1;
     public final static int RC_TAKE_PHOTO=1;
     public final static int RC_CHOOSE_PHOTO=2;
     public static String result=null;
+    private OkHttpClient client = new OkHttpClient.Builder()
+            .connectTimeout(180,TimeUnit.SECONDS)
+            .readTimeout(180,TimeUnit.SECONDS)
+            .build();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_danger);
         initView();
-
-
+        //将得到的图片上传
+       /* add_uploadCheckImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                uploadCheckImage();
+            }
+        });*/
         add_danger_save.setOnClickListener(new View.OnClickListener() {
             @SuppressLint("NewApi")
             @Override
             public void onClick(View view) {
+                uploadCheckImage();
                 initInfo();
                 saveHazardClearRecords();
                 if(result != null){
                     Toast.makeText(getApplicationContext(), "成功增加排查记录", Toast.LENGTH_SHORT).show();
                     finish();
                 }
+            }
+        });
+        add_danger_checkImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.e("click","触发事件");
+                showPopueWindow();
             }
         });
 
@@ -95,7 +115,7 @@ public class AddDangerActivity extends AppCompatActivity {
     }
     public static final MediaType JSON = MediaType.parse("application/json;charset=utf-8");
     public void save(String url,String json) throws IOException {
-        OkHttpClient client=new OkHttpClient();
+        //OkHttpClient client=new OkHttpClient();
         RequestBody body=RequestBody.create(JSON,json);
         Request request=new Request.Builder()
                 .url(url)
@@ -116,6 +136,7 @@ public class AddDangerActivity extends AppCompatActivity {
         add_danger_checkReception=findViewById(R.id.add_danger_checkReception);
         //add_danger_checkTime=findViewById(R.id.add_danger_checkTime);
         add_danger_save=findViewById(R.id.add_danger_save);
+        //add_uploadCheckImage=findViewById(R.id.add_uploadCheckImage);
     }
     @RequiresApi(api = Build.VERSION_CODES.N)
     public void initInfo(){
@@ -123,12 +144,6 @@ public class AddDangerActivity extends AppCompatActivity {
         hazardClearRecords.setEnterpriseName(add_danger_enterpriseNmae.getText().toString());
         hazardClearRecords.setCheckerName(add_danger_checkerName.getText().toString());
         //选择本地相册还是拍照
-        add_danger_checkImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showPopueWindow();
-            }
-        });
         hazardClearRecords.setCheckImg(photoPath);
         hazardClearRecords.setChangeReception(add_danger_checkReception.getText().toString());
         SimpleDateFormat time=new SimpleDateFormat("yyyy--mm--dd HH:mm:ss");
@@ -260,6 +275,7 @@ public class AddDangerActivity extends AppCompatActivity {
         intentToTakePhoto.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
         startActivityForResult(intentToTakePhoto, RC_TAKE_PHOTO);
     }
+    static File file;
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -274,12 +290,52 @@ public class AddDangerActivity extends AppCompatActivity {
                     //将照片显示在 ivImage上
                     Glide.with(this).load(photoPath).apply(requestOptions1).into(add_danger_checkImage);
                 }
+                file=new File(photoPath);
                 break;
             case RC_TAKE_PHOTO:
                 RequestOptions requestOptions = new RequestOptions().skipMemoryCache(true).diskCacheStrategy(DiskCacheStrategy.NONE);
                 //将图片显示在ivImage上
                 Glide.with(this).load(photoPath).apply(requestOptions).into(add_danger_checkImage);
+                file=new File(photoPath);
                 break;
+        }
+    }
+    public void uploadCheckImage(){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String url="http://192.168.43.200:7001/file/upload";
+                try {
+                    upload(url,file);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+    public void upload(String url,File file)throws IOException {
+        Log.e("file",new Gson().toJson(file));
+        if(file != null){
+            //OkHttpClient client=new OkHttpClient();
+            String fileName = file.getName();
+            RequestBody body=RequestBody.create(MediaType.parse("image/jpg"),file);
+            RequestBody requestBody = new MultipartBody.Builder()
+                    .setType(MultipartBody.FORM)
+                    .addFormDataPart("file", fileName, body)
+                    .build();
+            Request request=new Request.Builder()
+                    .url(url)
+                    .post(requestBody)
+                    .build();
+            Response response=client.newCall(request).execute();
+            if(response.isSuccessful()){
+                Log.e("打印照片路径",response.body().string());
+                String p = response.body().string();
+                hazardClearRecords.setCheckImg(p.substring(23,p.length()-12));
+            }else {
+                Log.e("上传图片失败",response.message());
+                hazardClearRecords.setCheckImg(null);
+            }
         }
     }
 }

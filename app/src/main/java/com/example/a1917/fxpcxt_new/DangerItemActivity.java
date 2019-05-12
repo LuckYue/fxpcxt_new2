@@ -21,6 +21,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
@@ -34,17 +35,23 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
+import com.example.a1917.fxpcxt_new.adapter.DangerAdapter;
 import com.example.a1917.fxpcxt_new.entity.HazardClearRecords;
 import com.example.a1917.fxpcxt_new.util.FileUtil;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.zhy.base.fileprovider.FileProvider7;
 
 import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.FormBody;
 import okhttp3.MediaType;
+import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -61,7 +68,14 @@ public class DangerItemActivity extends AppCompatActivity {
     public final static int RC_TAKE_PHOTO=1;
     public final static int RC_CHOOSE_PHOTO=2;
     private String checkImagePath,changeImagePath;
-    private static String updateResult=null,deleteResult=null;
+    private static String updateResult=null,deleteResult=null,result;
+    private OkHttpClient client = new OkHttpClient.Builder()
+            .connectTimeout(180,TimeUnit.SECONDS)
+            .readTimeout(180,TimeUnit.SECONDS)
+            .build();
+    private static Boolean isFirst=true;
+    private static Boolean isReturn=false;
+    private static File firstFile,secondFile;
     private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -85,7 +99,7 @@ public class DangerItemActivity extends AppCompatActivity {
         //接收fragment中传过来的对象
         Intent intent=getIntent();
         if(intent != null){
-            hazardClearRecords=(HazardClearRecords)intent.getSerializableExtra("HazardClearRecords");
+            hazardClearRecords=(HazardClearRecords)intent.getSerializableExtra("hazardClearRecords");
             //初始化控件
             danger_id=findViewById(R.id.danger_id);
             danger_hazardName=findViewById(R.id.danger_hazardName);
@@ -102,13 +116,13 @@ public class DangerItemActivity extends AppCompatActivity {
             danger_checkImage=findViewById(R.id.danger_checkImage);
             danger_changeImage=findViewById(R.id.danger_changeImage);
 
-            downloadCheckImage=findViewById(R.id.downloadCheckImage);
-            downloadChangeImage=findViewById(R.id.downloadChangeImage);
+            //downloadCheckImage=findViewById(R.id.downloadCheckImage);
+            //downloadChangeImage=findViewById(R.id.downloadChangeImage);
 
             danger_save=findViewById(R.id.danger_save);
             danger_delete=findViewById(R.id.danger_delete);
             //给各个控件赋值
-            danger_id.setText(hazardClearRecords.getId().toString());
+            danger_id.setText(hazardClearRecords.getId()+"");
             danger_hazardName.setText(hazardClearRecords.getHazardName());
             danger_enterpriseName.setText(hazardClearRecords.getEnterpriseName());
             danger_CheckerName.setText(hazardClearRecords.getCheckerName());
@@ -119,14 +133,47 @@ public class DangerItemActivity extends AppCompatActivity {
             danger_changerName.setText(hazardClearRecords.getChangerName());
             danger_changeReception.setText(hazardClearRecords.getChangeReception());
             danger_changeTime.setText(hazardClearRecords.getChangeTime().toString());
-            if(hazardClearRecords.getCheckImg()!=null){
+            if(hazardClearRecords.getCheckImg()!=null && !"".equals(hazardClearRecords.getCheckImg())){
+                //直接下载图片显示在imageview中
                 getCheckImgUrl();
+            }else{
+                Toast.makeText(this, "上传排查图片", Toast.LENGTH_SHORT).show();
+                //上传新的排查图片
+                danger_checkImage.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        tempImageViem=danger_checkImage;
+                        isFirst=true;
+                        showPopueWindow();
+                       /* File file=new File(photoPath);
+                        //上传图片获得图片路径
+                        getImagePath(file);
+                        hazardClearRecords.setCheckImg(result);*/
+                        //checkImagePath=photoPath;
+                    }
+                });
             }
-            if(hazardClearRecords.getChangeImg()!=null){
+            if(hazardClearRecords.getChangeImg()!=null && !"".equals(hazardClearRecords.getChangeImg())){
                 getChangeImgUrl();
-            }
+            }else{
+                Toast.makeText(this, "上传整改图片", Toast.LENGTH_SHORT).show();
+                //上传整改图片
+                danger_changeImage.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        tempImageViem=danger_changeImage;
+                        isFirst=false;
+                        showPopueWindow();
+                       /* File file=new File(photoPath);
+                        getImagePath(file);
+                        hazardClearRecords.setChangeImg(result);*/
+                        //changeImagePath=photoPath;
+                    }
+                });
 
+            }
         }
+
         //保存的触发事件
         danger_save.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.N)
@@ -134,6 +181,8 @@ public class DangerItemActivity extends AppCompatActivity {
             public void onClick(View view) {
                 //获取所有的数据放入实体类中
                 initInfo();
+                Log.e("firstFile", new Gson().toJson(firstFile) );
+                Log.e("secordFile", new Gson().toJson(secondFile) );
                 //将获取的实体类信息传到后台
                 updateNew();
                 if(updateResult!=null){
@@ -181,13 +230,14 @@ public class DangerItemActivity extends AppCompatActivity {
                 }
             }
         });*/
-        //上传新的排查图片
+       //上传新的排查图片
         danger_checkImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                tempImageViem=danger_changeImage;
+                tempImageViem=danger_checkImage;
+                isFirst=true;
                 showPopueWindow();
-                checkImagePath=photoPath;
+                //checkImagePath=photoPath;
             }
         });
         //上传整改图片
@@ -195,66 +245,92 @@ public class DangerItemActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 tempImageViem=danger_changeImage;
+                isFirst=false;
                 showPopueWindow();
-                changeImagePath=photoPath;
             }
         });
 
     }
 //从后台获取Image
     public void getCheckImgUrl(){
+        Log.e("getCheckImgUrl:","getCheckImgUrl");
         new Thread(new Runnable() {
             @Override
             public void run() {
-                String url=hazardClearRecords.getCheckImg();
+                String url = "http://192.168.43.200:7001/file/download";
+                String path = hazardClearRecords.getCheckImg();
                 try {
-                    getCheckImg(url);
                     imageView=danger_checkImage;
+                    getCheckImg(url,path);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
         }).start();
     }
-    public void getCheckImg(String url)throws IOException {
-        OkHttpClient client=new OkHttpClient();
+    public void getCheckImg(String url,String path)throws IOException {
+        Log.e("path:", path);
+        //OkHttpClient client=new OkHttpClient();
+        RequestBody fromBody= new FormBody.Builder()
+                .addEncoded("url",path)
+                .build();
         Request request=new Request.Builder()
                 .url(url)
+                .post(fromBody)
                 .build();
         Response response=client.newCall(request).execute();
         Message message = handler.obtainMessage();
         if(response.isSuccessful()){
-            message.what = IS_SUCCESS;
-            message.obj = response.body().bytes();
-            handler.sendMessage(message);
+            byte[] bytes = response.body().bytes();
+            Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+            this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    danger_checkImage.setImageBitmap(bitmap);
+                }
+            });
         }else {
             handler.sendEmptyMessage(IS_FAIL);
         }
     }
     public void getChangeImgUrl(){
+        Log.e("getChangeImgUrl:","getChangeImgUrl");
         new Thread(new Runnable() {
             @Override
             public void run() {
-                String url=hazardClearRecords.getChangeImg();
+                String url = "http://192.168.43.200:7001/file/download";
+                String path = hazardClearRecords.getChangeImg();
                 try {
-                    getChangeImg(url);
+                    imageView=danger_changeImage;
+                    getChangeImg(url,path);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
         }).start();
+
     }
-    public void getChangeImg(String url) throws IOException{
-        OkHttpClient client=new OkHttpClient();
+    public void getChangeImg(String url,String path) throws IOException{
+        Log.e("path:", path);
+        //OkHttpClient client=new OkHttpClient();
+        RequestBody fromBody= new FormBody.Builder()
+                .addEncoded("url",path)
+                .build();
         Request request=new Request.Builder()
                 .url(url)
+                .post(fromBody)
                 .build();
         Response response=client.newCall(request).execute();
         Message message = handler.obtainMessage();
         if(response.isSuccessful()){
-            message.what = IS_SUCCESS;
-            message.obj = response.body().bytes();
-            handler.sendMessage(message);
+            byte[] bytes = response.body().bytes();
+            Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+            this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    danger_changeImage.setImageBitmap(bitmap);
+                }
+            });
         }else {
             handler.sendEmptyMessage(IS_FAIL);
         }
@@ -266,10 +342,10 @@ public class DangerItemActivity extends AppCompatActivity {
         hazardClearRecords.setHazardName(danger_hazardName.getText().toString());
         hazardClearRecords.setEnterpriseName(danger_enterpriseName.getText().toString());
         hazardClearRecords.setCheckerName(danger_CheckerName.getText().toString());
-        hazardClearRecords.setCheckImg(checkImagePath);
+        //hazardClearRecords.setCheckImg(checkImagePath);
         hazardClearRecords.setChangeReception(danger_checkReception.getText().toString());
-        SimpleDateFormat time=new SimpleDateFormat("yyyy--mm--dd HH:mm:ss");
-        String date=time.format(System.currentTimeMillis());
+        SimpleDateFormat time=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+        String date=time.format(new Date());
         try {
             hazardClearRecords.setCheckTime(time.parse(date));
         } catch (ParseException e) {
@@ -278,10 +354,10 @@ public class DangerItemActivity extends AppCompatActivity {
         hazardClearRecords.setStatus(Boolean.parseBoolean(danger_status.getText().toString()));
         hazardClearRecords.setHazardLevel(danger_level.getText().toString());
         hazardClearRecords.setChangerName(danger_changerName.getText().toString());
-        hazardClearRecords.setChangeImg(changeImagePath);
+        //hazardClearRecords.setChangeImg(changeImagePath);
         hazardClearRecords.setChangeReception(danger_changeReception.getText().toString());
-        SimpleDateFormat time1=new SimpleDateFormat("yyyy--mm--dd HH:mm:ss");
-        String date1=time.format(System.currentTimeMillis());
+        SimpleDateFormat time1=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+        String date1=time.format(new Date());
         try {
             hazardClearRecords.setChangeTime(time.parse(date1));
         } catch (ParseException e) {
@@ -402,11 +478,22 @@ public class DangerItemActivity extends AppCompatActivity {
                     //将照片显示在 ivImage上
                     Glide.with(this).load(photoPath).apply(requestOptions1).into(tempImageViem);
                 }
+                Log.e("photoPath", "onActivityResult: "+photoPath);
+                if(isFirst){
+                    firstFile=new File(photoPath);
+                }else{
+                    secondFile=new File(photoPath);
+                }
                 break;
             case RC_TAKE_PHOTO:
                 RequestOptions requestOptions = new RequestOptions().skipMemoryCache(true).diskCacheStrategy(DiskCacheStrategy.NONE);
                 //将图片显示在ivImage上
                 Glide.with(this).load(photoPath).apply(requestOptions).into(tempImageViem);
+                if(isFirst){
+                    firstFile=new File(photoPath);
+                }else{
+                    secondFile=new File(photoPath);
+                }
                 break;
         }
     }
@@ -417,7 +504,21 @@ public class DangerItemActivity extends AppCompatActivity {
             public void run() {
                 String url="http://192.168.43.200:7001/hazardclearancerecords/update";
                 try {
-                    update(url,new Gson().toJson(hazardClearRecords));
+                    if(firstFile!=null&& (hazardClearRecords.getCheckImg()==null || hazardClearRecords.getChangeImg().length()<=0)){
+                        getImagePath(firstFile);
+                        while (!isReturn){
+                        }
+                        hazardClearRecords.setCheckImg(result);
+                        isReturn = false;
+                    }
+                    if(secondFile!=null&&(hazardClearRecords.getChangeImg()==null || hazardClearRecords.getChangeImg().length()<=0)){
+                        getImagePath(secondFile);
+                        while (!isReturn){
+                        }
+                        hazardClearRecords.setChangeImg(result);
+                        isReturn = false;
+                    }
+                    update(url,new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").create().toJson(hazardClearRecords));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -426,8 +527,8 @@ public class DangerItemActivity extends AppCompatActivity {
     }
     public static final MediaType JSON = MediaType.parse("application/json;charset=utf-8");
     public void update(String url,String json)throws IOException{
-        OkHttpClient client=new OkHttpClient();
-        RequestBody body=RequestBody.create(JSON,json);
+        //OkHttpClient client=new OkHttpClient();
+        RequestBody body = RequestBody.create(JSON,json);
         Request request=new Request.Builder()
                 .url(url)
                 .post(body)
@@ -455,7 +556,7 @@ public class DangerItemActivity extends AppCompatActivity {
         }).start();
     }
     public void delete(String url,String json)throws IOException{
-        OkHttpClient client=new OkHttpClient();
+        //OkHttpClient client=new OkHttpClient();
         RequestBody formBody=new FormBody.Builder()
                 .add("id",json)
                 .build();
@@ -468,6 +569,44 @@ public class DangerItemActivity extends AppCompatActivity {
             deleteResult=response.body().string();
         }else {
             deleteResult=null;
+        }
+    }
+    public void getImagePath(File file){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String url="http://192.168.43.200:7001/file/upload";
+                try {
+                    upload(url,file);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+    public void upload(String url,File file)throws IOException {
+        Log.e("file", new Gson().toJson(file));
+        if(file != null){
+            //OkHttpClient client=new OkHttpClient();
+            MultipartBody.Builder requestBody = new MultipartBody.Builder().setType(MultipartBody.FORM);
+            String fileName = file.getName();
+            RequestBody body=RequestBody.create(MediaType.parse("multipart/form-data"),file);
+
+            requestBody.addFormDataPart("file", fileName, body);
+            Request request=new Request.Builder()
+                    .url(url)
+                    .post(requestBody.build())
+                    .build();
+            Response response=client.newCall(request).execute();
+            if(response.isSuccessful()){
+                String p = response.body().string();
+                result = p.substring(23,p.length()-12);
+                //Log.e("打印照片路径",hazardClearRecords.getChangeImg());
+            }else {
+                //hazardClearRecords.setCheckImg(null);
+                result=null;
+            }
+            isReturn = true;
         }
     }
 }

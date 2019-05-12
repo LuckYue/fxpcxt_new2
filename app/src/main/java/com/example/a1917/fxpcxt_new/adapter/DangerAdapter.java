@@ -43,10 +43,10 @@ public class DangerAdapter extends BaseAdapter {
         TextView dStatus=view.findViewById(R.id.item_danger_status);
         TextView dLevel=view.findViewById(R.id.item_danger_level);
         TextView dChangerName=view.findViewById(R.id.item_danger_changerName);
-        dId.setText(mData.get(i).getId().toString()+"");
+        dId.setText(mData.get(i).getId().toString());
         dEnterpriseName.setText(mData.get(i).getEnterpriseName());
         dCheckerName.setText(mData.get(i).getCheckerName());
-        dStatus.setText(mData.get(i).getStatus().toString()+"");
+        dStatus.setText(mData.get(i).getStatus().toString());
         dLevel.setText(mData.get(i).getHazardLevel());
         dChangerName.setText(mData.get(i).getChangerName());
         return view;

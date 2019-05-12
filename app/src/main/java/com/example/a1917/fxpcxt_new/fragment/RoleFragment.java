@@ -29,6 +29,7 @@ import com.google.gson.reflect.TypeToken;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -103,7 +104,10 @@ public class RoleFragment extends Fragment {
 
     public static final MediaType JSON = MediaType.parse("application/json;charset=utf-8");
     public List<Role> select(String url) throws IOException {
-        OkHttpClient client=new OkHttpClient();
+        OkHttpClient client=new OkHttpClient.Builder()
+                .connectTimeout(180,TimeUnit.SECONDS)
+                .readTimeout(180,TimeUnit.SECONDS)
+                .build();
         Request request=new Request.Builder()
                 .url(url)
                 .build();

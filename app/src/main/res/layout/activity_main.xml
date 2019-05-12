@@ -60,6 +60,14 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:text="登录"/>
+        <TextView
+            android:id="@+id/faceLogin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:gravity="center"
+            android:text="人脸识别登录"
+            android:textColor="#008577"/>
     </LinearLayout>
 
 </RelativeLayout>

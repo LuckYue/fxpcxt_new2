@@ -13,6 +13,7 @@ import com.example.a1917.fxpcxt_new.entity.User;
 import com.google.gson.Gson;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.FormBody;
 import okhttp3.MediaType;
@@ -102,7 +103,10 @@ public class UserItemActivity extends AppCompatActivity {
     public  static final MediaType JSON=MediaType.parse("application/json;charset=utf-8");
     public String update(String url,String json)throws IOException{
 
-        OkHttpClient client=new OkHttpClient();
+        OkHttpClient client=new OkHttpClient.Builder()
+                .connectTimeout(180,TimeUnit.SECONDS)
+                .readTimeout(180,TimeUnit.SECONDS)
+                .build();
         RequestBody body=RequestBody.create(JSON,json);
         Request request=new Request.Builder()
                 .url(url)
@@ -135,7 +139,10 @@ public class UserItemActivity extends AppCompatActivity {
         }).start();
     }
     public  String delete(String url,User user) throws IOException{
-        OkHttpClient client=new OkHttpClient();
+        OkHttpClient client=new OkHttpClient.Builder()
+                .connectTimeout(180,TimeUnit.SECONDS)
+                .readTimeout(180,TimeUnit.SECONDS)
+                .build();
         RequestBody formBody=new FormBody.Builder()
                 .add("id",user.getId().toString())
                 .build();
