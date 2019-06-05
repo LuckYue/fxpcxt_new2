@@ -1,12 +1,13 @@
 package com.example.a1917.fxpcxt_new;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioButton;
 import android.widget.Toast;
 
 import com.example.a1917.fxpcxt_new.entity.User;
@@ -23,7 +24,8 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class UserItemActivity extends AppCompatActivity {
-    private EditText id,account,password,name,unitName,status,phone,orgnazation;
+    private EditText id,account,password,name,unitName,phone,orgnazation;
+    private RadioButton status_true,status_false;
     private Button btn_save,btn_delete;
     User user;
     @Override
@@ -43,9 +45,15 @@ public class UserItemActivity extends AppCompatActivity {
             name.setText(user.getName());
             unitName=findViewById(R.id.unitName);
             unitName.setText(user.getUnitName());
-            status=findViewById(R.id.status);
+            status_true=findViewById(R.id.user_status_true);
+            status_false=findViewById(R.id.user_status_false);
             Log.e("-=-=-=--=-=",user.getStatus().toString());
-            status.setText(user.getStatus().toString()+"");
+            if(user.getStatus()==true){
+                status_true.isChecked();
+            }else {
+                status_false.isChecked();
+            }
+
             phone=findViewById(R.id.phone);
             phone.setText(user.getPhone());
             orgnazation=findViewById(R.id.orgnazation);
@@ -167,7 +175,11 @@ public class UserItemActivity extends AppCompatActivity {
         user.setName(name.getText().toString());
         user.setUnitName(unitName.getText().toString());
         user.setPhone(phone.getText().toString());
-        user.setStatus(Boolean.parseBoolean(status.getText().toString()));
+        if(status_true.isChecked()){
+            user.setStatus(true);
+        }else {
+            user.setStatus(false);
+        }
         user.setOrgName(orgnazation.getText().toString());
         Log.e("up-------------",user.getAccount());
         return user;

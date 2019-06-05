@@ -7,12 +7,18 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.a1917.fxpcxt_new.common.CommonResponse;
 import com.example.a1917.fxpcxt_new.entity.User;
+import com.example.a1917.fxpcxt_new.route.Routs;
+import com.example.a1917.fxpcxt_new.util.CallBackUtil;
+import com.example.a1917.fxpcxt_new.util.GsonUtil;
+import com.example.a1917.fxpcxt_new.util.OkhttpUtil;
 import com.google.gson.Gson;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
+import okhttp3.Call;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -23,7 +29,6 @@ public class AddUserActivity extends AppCompatActivity {
     private EditText mAccount, mPassword, mName, mUnitName, mStatus, mPhone, mOrgnazation;
     private Button btn_save;
     User user = new User();
-    static String result=null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,51 +38,40 @@ public class AddUserActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //将user提交到后台
-                String url = "http://192.168.43.200:7001/userInfo/save";
-                saveUser(url, new Gson().toJson(user));
-                if(result !=null){
-                    Toast.makeText(getApplicationContext(), "成功增加用户", Toast.LENGTH_SHORT).show();
+                saveUser();
+            }
+        });
+    }
+    public void saveUser() {
+        OkhttpUtil.okHttpPost(Routs.SAVE_USER, new CallBackUtil<CommonResponse>() {
+            @Override
+            public CommonResponse onParseResponse(Call call, Response response) {
+                String p = null;
+                try {
+                    p=response.body().string();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                CommonResponse commonResponse=GsonUtil.getGson().fromJson(p,CommonResponse.class);
+                return commonResponse;
+            }
+
+            @Override
+            public void onFailure(Call call, Exception e) {
+                Toast.makeText(AddUserActivity.this, "网络异常", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onResponse(CommonResponse response) {
+                if(response.isSuccess()){
+                    Toast.makeText(AddUserActivity.this, "增加成功", Toast.LENGTH_SHORT).show();
                     finish();
+                }else {
+                    Toast.makeText(AddUserActivity.this, "增加失败", Toast.LENGTH_SHORT).show();
                 }
             }
         });
     }
-    public void saveUser(String url, String json) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    result = save(url, json);
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
-    }
-
-    public static final MediaType JSON = MediaType.parse("application/json;charset=utf-8");
-
-    public String save(String url, String json) throws IOException {
-        OkHttpClient client=new OkHttpClient.Builder()
-                .connectTimeout(180,TimeUnit.SECONDS)
-                .readTimeout(180,TimeUnit.SECONDS)
-                .build();
-        RequestBody body = RequestBody.create(JSON, json);
-        Request request = new Request.Builder()
-                .url(url)
-                .post(body)
-                .build();
-        Response response = client.newCall(request).execute();
-        if(response.isSuccessful()){
-            String result1 = response.body().string();
-            return result1;
-        }else{
-            return null;
-        }
-
-    }
-
     public void initLayout() {
         mAccount = findViewById(R.id.add_account);
         mPassword = findViewById(R.id.add_password);

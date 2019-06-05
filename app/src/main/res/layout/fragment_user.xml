@@ -1,20 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-    <ListView
-        android:id="@+id/userList"
+    <include layout="@layout/user_table_head" />
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_above="@id/addUser">
-    </ListView>
-    <Button
-        android:id="@+id/addUser"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="+"
-        android:textSize="26sp"
-        android:layout_alignParentBottom="true"/>
-</RelativeLayout>
+        android:layout_height="match_parent">
+        <ListView
+            android:id="@+id/userList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/addUser"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="0dp"
+            android:divider="@null"
+            android:dividerHeight="5dp">
+        </ListView>
+        <Button
+            android:id="@+id/addUser"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="+"
+            android:textSize="26sp"
+            android:layout_alignParentBottom="true"/>
+    </RelativeLayout>
+
+</LinearLayout>

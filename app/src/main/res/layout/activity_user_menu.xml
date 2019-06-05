@@ -1,128 +1,150 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
+    android:fitsSystemWindows="true"
+    tools:openDrawer="start"
     >
-    <android.support.v4.view.ViewPager
-        android:id="@+id/viewPager"
+    <include
+        layout="@layout/app_bar_main"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
-    </android.support.v4.view.ViewPager>
-    <LinearLayout
+        android:layout_height="match_parent" />
+    <!--<LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="55dp"
-        android:gravity="center"
-        android:orientation="horizontal"
-        >
-        <!-- 企业信息 -->
-        <RelativeLayout
-            android:id="@+id/companyinfor"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <android.support.v4.view.ViewPager
+            android:id="@+id/viewPager"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+        </android.support.v4.view.ViewPager>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:gravity="center"
+            android:orientation="horizontal"
             >
 
-            <ImageView
-                android:id="@+id/companyimg"
+            <RelativeLayout
+                android:id="@+id/companyinfor"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="15dp"
-                android:src="@drawable/companyinfor" />
+                android:layout_weight="1"
+                >
 
-            <TextView
-                android:id="@+id/companytext"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/companyimg"
-                android:layout_marginTop="15dp"
-                android:text="@string/company" />
-        </RelativeLayout>
-        <!-- 角色 -->
-        <RelativeLayout
-            android:id="@+id/rolemanager"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            >
-            <ImageView android:id="@+id/roleimg"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="15dp"
-                android:src="@drawable/rolemanager"
-                />
-            <TextView
-                android:id="@+id/roletext"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/role"
-                android:layout_below="@id/roleimg"
-                />
-        </RelativeLayout>
-        <!-- 风险 -->
-        <RelativeLayout
-            android:id="@+id/dangercheck"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            >
-            <ImageView android:id="@+id/dangerimg"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="15dp"
-                android:src="@drawable/dangercheck"
-                />
-            <TextView
-                android:id="@+id/dangertext"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/danger"
-                android:layout_below="@id/dangerimg"
-                />
-        </RelativeLayout>
-        <!-- 用户管理 -->
-        <RelativeLayout
-            android:id="@+id/usermanger"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            >
+                <ImageView
+                    android:id="@+id/companyimg"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="15dp"
+                    android:src="@drawable/companyinfor" />
 
-            <ImageView
-                android:id="@+id/userimg"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="15dp"
-                android:src="@drawable/usermanager" />
-            <TextView
-                android:id="@+id/usertext"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/user"
-                android:layout_below="@id/userimg"
-                />
-        </RelativeLayout>
-        <!-- 我的 -->
-        <RelativeLayout
-            android:id="@+id/me"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            >
-            <ImageView android:id="@+id/meimg"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="15dp"
-                android:src="@drawable/me"
-                />
-            <TextView
-                android:id="@+id/metext"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/me"
-                android:layout_below="@id/meimg"
-                />
-        </RelativeLayout>
-    </LinearLayout>
+                <TextView
+                    android:id="@+id/companytext"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/companyimg"
+                    android:layout_marginTop="15dp"
+                    android:text="@string/company" />
+            </RelativeLayout>
 
-</LinearLayout>
+            <RelativeLayout
+                android:id="@+id/rolemanager"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                >
+                <ImageView android:id="@+id/roleimg"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="15dp"
+                    android:src="@drawable/rolemanager"
+                    />
+                <TextView
+                    android:id="@+id/roletext"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/role"
+                    android:layout_below="@id/roleimg"
+                    />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/dangercheck"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                >
+                <ImageView android:id="@+id/dangerimg"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="15dp"
+                    android:src="@drawable/dangercheck"
+                    />
+                <TextView
+                    android:id="@+id/dangertext"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/danger"
+                    android:layout_below="@id/dangerimg"
+                    />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/usermanger"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                >
+
+                <ImageView
+                    android:id="@+id/userimg"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="15dp"
+                    android:src="@drawable/usermanager" />
+                <TextView
+                    android:id="@+id/usertext"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/user"
+                    android:layout_below="@id/userimg"
+                    />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/me"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                >
+                <ImageView android:id="@+id/meimg"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="15dp"
+                    android:src="@drawable/me"
+                    />
+                <TextView
+                    android:id="@+id/metext"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/me"
+                    android:layout_below="@id/meimg"
+                    />
+            </RelativeLayout>
+        </LinearLayout>
+    </LinearLayout>-->
+    <android.support.design.widget.NavigationView
+        android:id="@+id/nav_view"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:fitsSystemWindows="true"
+        app:headerLayout="@layout/nav_header_main"
+        app:menu="@menu/activity_main_drawer" />
+
+
+</android.support.v4.widget.DrawerLayout>

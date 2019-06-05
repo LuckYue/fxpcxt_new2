@@ -8,12 +8,14 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.a1917.fxpcxt_new.entity.Function;
 import com.example.a1917.fxpcxt_new.entity.Role;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.lljjcoder.citypickerview.widget.CityPickerView;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -31,6 +33,7 @@ public class RoleItemActivity extends AppCompatActivity {
     private EditText role_id,role_name,role_status;
     private CheckBox role_function1,role_function2,role_function3,role_function4,role_function5;
     private Button btn_save,btn_delete;
+    private TextView role_data;
     private List<CheckBox> checkBoxes=new ArrayList<>();
     static String updateResult=null,deleteResult=null;
     @Override
@@ -48,6 +51,13 @@ public class RoleItemActivity extends AppCompatActivity {
             //将role中的值放到页面中
             setValues(role);
         }
+        role_data.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                selectAddress();
+                role_data.setText(address);
+            }
+        });
         //触发事件
         btn_save.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -94,6 +104,7 @@ public class RoleItemActivity extends AppCompatActivity {
             }
         }
         role.setFunctions(tempList);
+        role.setDataOperate(address);
         return role;
     }
     public  void updateRole(Role role){
@@ -178,6 +189,7 @@ public class RoleItemActivity extends AppCompatActivity {
                 checkBoxes.get(k).setChecked(true);
             }
         }
+        role_data.setText(role.getDataOperate());
     }
     //后台获取checkBox的值
     List<Function> list=null;
@@ -240,5 +252,28 @@ public class RoleItemActivity extends AppCompatActivity {
         checkBoxes.add(role_function3);
         checkBoxes.add(role_function4);
         checkBoxes.add(role_function5);
+        role_data=findViewById(R.id.role_data);
+    }
+    static String address;
+    public void selectAddress(){
+        CityPickerView cityPickerView = new CityPickerView(RoleItemActivity.this);
+        cityPickerView.setOnCityItemClickListener(new CityPickerView.OnCityItemClickListener() {
+            @Override
+            public void onSelected(String... citySelected) {
+                //省份
+                String province = citySelected[0];
+                //城市
+                String city = citySelected[1];
+                //区县
+                String district = citySelected[2];
+                //邮编
+                String code = citySelected[3];
+                //Toast.makeText(MainActivity.this,province+"-"+city+"-"+district,Toast.LENGTH_LONG).show();
+                address=province+city+district;
+            }
+        });
+        cityPickerView.show();
+
+        //return address;
     }
 }

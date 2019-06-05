@@ -1,8 +1,10 @@
 package com.example.a1917.fxpcxt_new.fragment;
 
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -22,20 +24,31 @@ import com.example.a1917.fxpcxt_new.R;
 import com.example.a1917.fxpcxt_new.UserItemActivity;
 import com.example.a1917.fxpcxt_new.UserMenuActivity;
 import com.example.a1917.fxpcxt_new.adapter.UserAdapter;
+import com.example.a1917.fxpcxt_new.common.CommonResponse;
 import com.example.a1917.fxpcxt_new.entity.Enterprise;
 import com.example.a1917.fxpcxt_new.entity.User;
+import com.example.a1917.fxpcxt_new.route.Routs;
+import com.example.a1917.fxpcxt_new.util.CallBackUtil;
+import com.example.a1917.fxpcxt_new.util.GsonUtil;
+import com.example.a1917.fxpcxt_new.util.OkhttpUtil;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
+import okhttp3.Call;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import okhttp3.Route;
+
+import static com.example.a1917.fxpcxt_new.AddDangerActivity.result;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -57,22 +70,45 @@ public class UserFragment extends Fragment {
         mContext = getContext();
         //User user = new User(1l,"1","sa","sa",1l,"安监局",1l,true,"18870954590",1L);
         View view=inflater.inflate(R.layout.fragment_user,container,false);
-        //连接后台，接收数据
-        //List<User> userInfoList=selectAll();
-        selectAll();
-//        while (list == null) {
-//            try {
-//                Thread.sleep(1000);
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-//        }
         userList=view.findViewById(R.id.userList);
-//        mData=new LinkedList<User>();
-////        for(User a:list)
-////            mData.add(a);
-//        userAdapter=new UserAdapter((LinkedList<User>)mData,mContext);
-//        userList.setAdapter(userAdapter);
+        Map<String,String> headers = new HashMap<String,String>();
+        SharedPreferences preferences = getActivity().getSharedPreferences("Token",
+                Activity.MODE_PRIVATE);
+        String token = preferences.getString("Token", "");
+        headers.put(Routs.AUTHORIZATION_HEADER_NAME,Routs.AUTHORIZATION_HEADER_NAME_PREFIX+token);
+        //连接后台，接收数据
+        OkhttpUtil.okHttpPost(Routs.GET_ALL_USER_INFO,new CallBackUtil<CommonResponse<List<User>>>() {
+            @Override
+            public CommonResponse<List<User>> onParseResponse(Call call, Response response) {
+                String p = null;
+                try {
+                    p = response.body().string();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                CommonResponse<List<User>> commonResponse = GsonUtil.getGson().fromJson(p,new TypeToken<CommonResponse<List<User>>>(){}.getType());
+                return commonResponse;
+            }
+
+            @Override
+            public void onFailure(Call call, Exception e) {
+                Toast.makeText(mContext, "网络异常", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onResponse(CommonResponse<List<User>> response) {
+                if(response.isSuccess()){
+                    List<User> list=response.getData();
+                    mData=new LinkedList<User>();
+                    for(User a:list)
+                        mData.add(a);
+                    userAdapter=new UserAdapter((LinkedList<User>)mData,mContext);
+                    userList.setAdapter(userAdapter);
+                    //内容刷新
+                    userAdapter.notifyDataSetChanged();
+                }
+            }
+        });
         userList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -86,51 +122,6 @@ public class UserFragment extends Fragment {
         });
         return view;
     }
-    static List<User> list=null;
-    public  List<User> selectAll(){
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                String url="http://192.168.43.200:7001/userInfo/selectAll";
-                try {
-                    list=select(url);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
-        return list;
-    }
-    public static final MediaType JSON = MediaType.parse("application/json;charset=utf-8");
-    public List<User> select(String url) throws IOException {
-        OkHttpClient client=new OkHttpClient();
-        Request request=new Request.Builder()
-                .url(url)
-                .build();
-        Response response=client.newCall(request).execute();
-
-        String p = response.body().string();
-        String body = p.substring(23,p.length()-12);
-        Log.e("-------",body);
-        List<User> list=new Gson().fromJson(body,new TypeToken<List<User>>(){}.getType());
-        Log.e("000-------------",list.get(0).getId()+list.get(0).getOrgId().toString());
-        showUser(list);
-        return list;
-    }
-
-    private void showUser(List<User> users){
-        getActivity().runOnUiThread(new Runnable(){
-            @Override
-            public void run(){
-                mData=new LinkedList<User>();
-                for(User a:list)
-                    mData.add(a);
-                userAdapter=new UserAdapter((LinkedList<User>)mData,mContext);
-                userList.setAdapter(userAdapter);
-            }
-        });
-    }
-
 //增加用户的信息
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {

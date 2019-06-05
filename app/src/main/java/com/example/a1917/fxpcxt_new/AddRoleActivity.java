@@ -1,19 +1,19 @@
 package com.example.a1917.fxpcxt_new;
 
-import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.a1917.fxpcxt_new.entity.Function;
 import com.example.a1917.fxpcxt_new.entity.Role;
-import com.example.a1917.fxpcxt_new.fragment.UserFragment;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.lljjcoder.citypickerview.widget.CityPickerView;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -30,6 +30,7 @@ public class AddRoleActivity extends AppCompatActivity {
     private EditText add_role_name,add_role_status;
     private CheckBox add_role_function1,add_role_function2,add_role_function3,add_role_function4,add_role_function5;
     private Button btn_role_save;
+    private TextView add_role_data;
     private List<CheckBox> checkBoxList = new ArrayList<>();
     Role role=new Role();
     Function function=new Function();
@@ -58,6 +59,14 @@ public class AddRoleActivity extends AppCompatActivity {
 
                     }
                 }
+                add_role_data.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        selectAddress();
+                        add_role_data.setText(address);
+                        role.setDataOperate(address);
+                    }
+                });
                 //将list放在role中
                 role.setFunctions(list);
                 //上传数据到后台
@@ -117,6 +126,8 @@ public class AddRoleActivity extends AppCompatActivity {
         checkBoxList.add(add_role_function3);
         checkBoxList.add(add_role_function4);
         checkBoxList.add(add_role_function5);
+        add_role_data=findViewById(R.id.add_role_data);
+
     }
     List<Function> list=null;
     public void initCheckBox(){
@@ -159,5 +170,27 @@ public class AddRoleActivity extends AppCompatActivity {
         String body = p.substring(23,p.length()-12);
         list=new Gson().fromJson(body,new TypeToken<List<Function>>(){}.getType());
         return list;
+    }
+    static String address;
+    public void selectAddress(){
+        CityPickerView cityPickerView = new CityPickerView(AddRoleActivity.this);
+        cityPickerView.setOnCityItemClickListener(new CityPickerView.OnCityItemClickListener() {
+            @Override
+            public void onSelected(String... citySelected) {
+                //省份
+                String province = citySelected[0];
+                //城市
+                String city = citySelected[1];
+                //区县
+                String district = citySelected[2];
+                //邮编
+                String code = citySelected[3];
+                //Toast.makeText(MainActivity.this,province+"-"+city+"-"+district,Toast.LENGTH_LONG).show();
+                address=province+city+district;
+            }
+        });
+        cityPickerView.show();
+
+        //return address;
     }
 }

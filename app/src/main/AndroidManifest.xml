@@ -25,6 +25,7 @@
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -37,8 +38,13 @@
         <activity android:name=".AddDangerActivity" />
         <activity android:name=".AddCompanyActivity" />
         <activity android:name=".CompanyItemActivity" />
-        <activity android:name=".FaceJudgeActivity">
-        </activity>
+        <activity android:name=".FaceJudgeActivity" />
+        <activity android:name=".ChangeActivity" />
+        <activity android:name=".ChangeItemActivity" />
+        <activity android:name=".RecheckActivity" />
+        <activity android:name=".HazardExamineActivity" />
+        <activity android:name=".UploadFileActivity" />
+        <activity android:name=".UploadFaceActivity"></activity>
     </application>
 
 </manifest>

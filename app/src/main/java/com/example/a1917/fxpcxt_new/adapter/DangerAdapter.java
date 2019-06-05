@@ -38,17 +38,21 @@ public class DangerAdapter extends BaseAdapter {
     public View getView(int i, View view, ViewGroup viewGroup) {
         view=LayoutInflater.from(mContext).inflate(R.layout.item_danger_list,viewGroup,false);
         TextView dId=view.findViewById(R.id.item_danger_id);
-        TextView dEnterpriseName=view.findViewById(R.id.item_danger_enterpriseName);
-        TextView dCheckerName=view.findViewById(R.id.item_danger_checkerName);
-        TextView dStatus=view.findViewById(R.id.item_danger_status);
+        TextView dHazardName = view.findViewById(R.id.item_danger_hazardName);
+        TextView dInspectionBasis = view.findViewById(R.id.item_danger_inspectionBasis);
+        //TextView dEnterpriseName=view.findViewById(R.id.item_danger_enterpriseName);
+        //TextView dCheckerName=view.findViewById(R.id.item_danger_checkerName);
+        //TextView dStatus=view.findViewById(R.id.item_danger_status);
         TextView dLevel=view.findViewById(R.id.item_danger_level);
-        TextView dChangerName=view.findViewById(R.id.item_danger_changerName);
+        //TextView dChangerName=view.findViewById(R.id.item_danger_changerName);
         dId.setText(mData.get(i).getId().toString());
-        dEnterpriseName.setText(mData.get(i).getEnterpriseName());
-        dCheckerName.setText(mData.get(i).getCheckerName());
-        dStatus.setText(mData.get(i).getStatus().toString());
+        dHazardName.setText(mData.get(i).getHazardName());
+        dInspectionBasis.setText(mData.get(i).getInspectionBasis());
+        //dEnterpriseName.setText(mData.get(i).getEnterpriseName());
+        //dCheckerName.setText(mData.get(i).getCheckerName());
+        //dStatus.setText(mData.get(i).getStatus().toString());
         dLevel.setText(mData.get(i).getHazardLevel());
-        dChangerName.setText(mData.get(i).getChangerName());
+        //dChangerName.setText(mData.get(i).getChangerName());
         return view;
     }
 }

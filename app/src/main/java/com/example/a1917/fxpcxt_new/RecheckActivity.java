@@ -9,7 +9,6 @@ import android.graphics.BitmapFactory;
 import android.icu.text.SimpleDateFormat;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
@@ -20,6 +19,7 @@ import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
@@ -55,7 +55,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class DangerItemActivity extends AppCompatActivity {
+public class RecheckActivity extends AppCompatActivity {
     private EditText danger_status,danger_level,danger_changerName,danger_changeReception,danger_inspectionBasis;
     private TextView danger_id,danger_hazardName,danger_enterpriseName,danger_CheckerName,danger_checkReception,danger_checkTime,danger_changeTime,danger_hazardType;
     private ImageView danger_checkImage,danger_changeImage,imageView,tempImageViem;
@@ -93,33 +93,33 @@ public class DangerItemActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_danger_item);
+        setContentView(R.layout.activity_recheck);
         //接收fragment中传过来的对象
         Intent intent=getIntent();
         if(intent != null){
             hazardClearRecords=(HazardClearRecords)intent.getSerializableExtra("hazardClearRecords");
             //初始化控件
-            danger_id=findViewById(R.id.danger_id);
-            danger_hazardName=findViewById(R.id.danger_hazardName);
-            danger_enterpriseName=findViewById(R.id.danger_enterpriseName);
-            danger_CheckerName=findViewById(R.id.danger_CheckerName);
-            danger_checkReception=findViewById(R.id.danger_checkReception);
-            danger_checkTime=findViewById(R.id.danger_checkTime);
-            danger_status=findViewById(R.id.danger_status);
-            danger_level=findViewById(R.id.danger_level);
-            danger_changerName=findViewById(R.id.danger_changerName);
-            danger_changeReception=findViewById(R.id.danger_changeReception);
-            danger_changeTime=findViewById(R.id.danger_changeTime);
+            danger_id=findViewById(R.id.danger_id2);
+            danger_hazardName=findViewById(R.id.danger_hazardName2);
+            danger_enterpriseName=findViewById(R.id.danger_enterpriseName2);
+            danger_CheckerName=findViewById(R.id.danger_CheckerName2);
+            danger_checkReception=findViewById(R.id.danger_checkReception2);
+            danger_checkTime=findViewById(R.id.danger_checkTime2);
+            danger_status=findViewById(R.id.danger_status2);
+            danger_level=findViewById(R.id.danger_level2);
+            danger_changerName=findViewById(R.id.danger_changerName2);
+            danger_changeReception=findViewById(R.id.danger_changeReception2);
+            danger_changeTime=findViewById(R.id.danger_changeTime2);
 
-            danger_checkImage=findViewById(R.id.danger_checkImage);
-            danger_changeImage=findViewById(R.id.danger_changeImage);
+            danger_checkImage=findViewById(R.id.danger_checkImage2);
+            danger_changeImage=findViewById(R.id.danger_changeImage2);
 
             //downloadCheckImage=findViewById(R.id.downloadCheckImage);
             //downloadChangeImage=findViewById(R.id.downloadChangeImage);
-            danger_hazardType=findViewById(R.id.danger_hazardType);
-            danger_inspectionBasis=findViewById(R.id.danger_inspectionBasis);
-            danger_save=findViewById(R.id.danger_save);
-            danger_delete=findViewById(R.id.danger_delete);
+            danger_hazardType=findViewById(R.id.danger_hazardType2);
+            danger_inspectionBasis=findViewById(R.id.danger_inspectionBasis2);
+            danger_save=findViewById(R.id.danger_save2);
+            danger_delete=findViewById(R.id.danger_delete2);
             //给各个控件赋值
             danger_id.setText(hazardClearRecords.getId()+"");
             danger_hazardName.setText(hazardClearRecords.getHazardName());
@@ -182,13 +182,15 @@ public class DangerItemActivity extends AppCompatActivity {
             public void onClick(View view) {
                 //获取所有的数据放入实体类中
                 initInfo();
-                hazardClearRecords.setStatus("已排查");
+                hazardClearRecords.setStatus("完成");
+                hazardClearRecords.setCheckStatus("审核结束");
                 Log.e("firstFile", new Gson().toJson(firstFile) );
                 Log.e("secordFile", new Gson().toJson(secondFile) );
                 //将获取的实体类信息传到后台
-                updateNew();
+                String url = "http://192.168.43.200:7001/hazardclearancerecords/update";
+                updateNew(url);
                 if(updateResult!=null){
-                    Toast.makeText(DangerItemActivity.this, "更新成功", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(RecheckActivity.this, "整改成功", Toast.LENGTH_SHORT).show();
                     finish();
                 }
             }
@@ -200,11 +202,14 @@ public class DangerItemActivity extends AppCompatActivity {
             public void onClick(View view) {
                 //获取id，传入后台删除这条记录
                 initInfo();
-                hazardClearRecords.setStatus("未排查");
-                updateNew();
-                //deleteRecord();
+                hazardClearRecords.setStatus("已整改");
+                hazardClearRecords.setCheckStatus("不通过");
+                String url = "http://192.168.43.200:7001/hazardclearancerecords/update";
+                //deleteRecord(hazardClearRecords);
+                updateNew(url);
+
                 if(deleteResult!=null){
-                    Toast.makeText(DangerItemActivity.this, "撤销排查记录成功", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(RecheckActivity.this, "整改不成功", Toast.LENGTH_SHORT).show();
                     finish();
                 }
             }
@@ -236,7 +241,7 @@ public class DangerItemActivity extends AppCompatActivity {
                 }
             }
         });*/
-       //上传新的排查图片
+        //上传新的排查图片
         danger_checkImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -257,7 +262,7 @@ public class DangerItemActivity extends AppCompatActivity {
         });
 
     }
-//从后台获取Image
+    //从后台获取Image
     public void getCheckImgUrl(){
         Log.e("getCheckImgUrl:","getCheckImgUrl");
         new Thread(new Runnable() {
@@ -360,6 +365,8 @@ public class DangerItemActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         //hazardClearRecords.setStatus(Boolean.parseBoolean(danger_status.getText().toString()));
+        /*hazardClearRecords.setStatus("完成");
+        hazardClearRecords.setCheckStatus("审核结束");*/
         hazardClearRecords.setHazardLevel(danger_level.getText().toString());
         hazardClearRecords.setChangerName(danger_changerName.getText().toString());
         //hazardClearRecords.setChangeImg(changeImagePath);
@@ -506,11 +513,10 @@ public class DangerItemActivity extends AppCompatActivity {
         }
     }
     //save触发事件上传到后台
-    public void updateNew(){
+    public void updateNew(String url){
         new Thread(new Runnable() {
             @Override
             public void run() {
-                String url="http://192.168.43.200:7001/hazardclearancerecords/update";
                 try {
                     if(firstFile!=null&& (hazardClearRecords.getCheckImg()==null || hazardClearRecords.getChangeImg().length()<=0)){
                         getImagePath(firstFile);
@@ -550,13 +556,13 @@ public class DangerItemActivity extends AppCompatActivity {
 
     }
     //delete触发事件连接后台删除
-    public void  deleteRecord(){
+    public void  deleteRecord(HazardClearRecords hazardClearRecords){
         new Thread(new Runnable() {
             @Override
             public void run() {
                 String url="http://192.168.43.200:7001/hazardclearancerecords/delete";
                 try {
-                    delete(url,hazardClearRecords.getId().toString());
+                    delete(url,new Gson().toJson(hazardClearRecords));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -617,4 +623,5 @@ public class DangerItemActivity extends AppCompatActivity {
             isReturn = true;
         }
     }
+
 }

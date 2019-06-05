@@ -55,7 +55,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class DangerItemActivity extends AppCompatActivity {
+public class ChangeItemActivity extends AppCompatActivity {
     private EditText danger_status,danger_level,danger_changerName,danger_changeReception,danger_inspectionBasis;
     private TextView danger_id,danger_hazardName,danger_enterpriseName,danger_CheckerName,danger_checkReception,danger_checkTime,danger_changeTime,danger_hazardType;
     private ImageView danger_checkImage,danger_changeImage,imageView,tempImageViem;
@@ -93,33 +93,33 @@ public class DangerItemActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_danger_item);
+        setContentView(R.layout.activity_change_item);
         //接收fragment中传过来的对象
         Intent intent=getIntent();
         if(intent != null){
             hazardClearRecords=(HazardClearRecords)intent.getSerializableExtra("hazardClearRecords");
             //初始化控件
-            danger_id=findViewById(R.id.danger_id);
-            danger_hazardName=findViewById(R.id.danger_hazardName);
-            danger_enterpriseName=findViewById(R.id.danger_enterpriseName);
-            danger_CheckerName=findViewById(R.id.danger_CheckerName);
-            danger_checkReception=findViewById(R.id.danger_checkReception);
-            danger_checkTime=findViewById(R.id.danger_checkTime);
-            danger_status=findViewById(R.id.danger_status);
-            danger_level=findViewById(R.id.danger_level);
-            danger_changerName=findViewById(R.id.danger_changerName);
-            danger_changeReception=findViewById(R.id.danger_changeReception);
-            danger_changeTime=findViewById(R.id.danger_changeTime);
+            danger_id=findViewById(R.id.danger_id1);
+            danger_hazardName=findViewById(R.id.danger_hazardName1);
+            danger_enterpriseName=findViewById(R.id.danger_enterpriseName1);
+            danger_CheckerName=findViewById(R.id.danger_CheckerName1);
+            danger_checkReception=findViewById(R.id.danger_checkReception1);
+            danger_checkTime=findViewById(R.id.danger_checkTime1);
+            danger_status=findViewById(R.id.danger_status1);
+            danger_level=findViewById(R.id.danger_level1);
+            danger_changerName=findViewById(R.id.danger_changerName1);
+            danger_changeReception=findViewById(R.id.danger_changeReception1);
+            danger_changeTime=findViewById(R.id.danger_changeTime1);
 
-            danger_checkImage=findViewById(R.id.danger_checkImage);
-            danger_changeImage=findViewById(R.id.danger_changeImage);
+            danger_checkImage=findViewById(R.id.danger_checkImage1);
+            danger_changeImage=findViewById(R.id.danger_changeImage1);
 
             //downloadCheckImage=findViewById(R.id.downloadCheckImage);
             //downloadChangeImage=findViewById(R.id.downloadChangeImage);
-            danger_hazardType=findViewById(R.id.danger_hazardType);
-            danger_inspectionBasis=findViewById(R.id.danger_inspectionBasis);
-            danger_save=findViewById(R.id.danger_save);
-            danger_delete=findViewById(R.id.danger_delete);
+            danger_hazardType=findViewById(R.id.danger_hazardType1);
+            danger_inspectionBasis=findViewById(R.id.danger_inspectionBasis1);
+            danger_save=findViewById(R.id.danger_save1);
+            danger_delete=findViewById(R.id.danger_delete1);
             //给各个控件赋值
             danger_id.setText(hazardClearRecords.getId()+"");
             danger_hazardName.setText(hazardClearRecords.getHazardName());
@@ -182,13 +182,15 @@ public class DangerItemActivity extends AppCompatActivity {
             public void onClick(View view) {
                 //获取所有的数据放入实体类中
                 initInfo();
-                hazardClearRecords.setStatus("已排查");
+                hazardClearRecords.setStatus("已整改");
+                hazardClearRecords.setCheckStatus("审核中");
                 Log.e("firstFile", new Gson().toJson(firstFile) );
                 Log.e("secordFile", new Gson().toJson(secondFile) );
                 //将获取的实体类信息传到后台
-                updateNew();
+                String url="http://192.168.43.200:7001/hazardclearancerecords/update";
+                updateNew(url);
                 if(updateResult!=null){
-                    Toast.makeText(DangerItemActivity.this, "更新成功", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ChangeItemActivity.this, "排查成功", Toast.LENGTH_SHORT).show();
                     finish();
                 }
             }
@@ -200,11 +202,12 @@ public class DangerItemActivity extends AppCompatActivity {
             public void onClick(View view) {
                 //获取id，传入后台删除这条记录
                 initInfo();
-                hazardClearRecords.setStatus("未排查");
-                updateNew();
+                hazardClearRecords.setStatus("已排查");
+                String url="http://192.168.43.200:7001/hazardclearancerecords/update";
+                updateNew(url);
                 //deleteRecord();
                 if(deleteResult!=null){
-                    Toast.makeText(DangerItemActivity.this, "撤销排查记录成功", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ChangeItemActivity.this, "撤销整改记录成功", Toast.LENGTH_SHORT).show();
                     finish();
                 }
             }
@@ -236,7 +239,7 @@ public class DangerItemActivity extends AppCompatActivity {
                 }
             }
         });*/
-       //上传新的排查图片
+        //上传新的排查图片
         danger_checkImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -257,7 +260,7 @@ public class DangerItemActivity extends AppCompatActivity {
         });
 
     }
-//从后台获取Image
+    //从后台获取Image
     public void getCheckImgUrl(){
         Log.e("getCheckImgUrl:","getCheckImgUrl");
         new Thread(new Runnable() {
@@ -506,11 +509,11 @@ public class DangerItemActivity extends AppCompatActivity {
         }
     }
     //save触发事件上传到后台
-    public void updateNew(){
+    public void updateNew(String url){
         new Thread(new Runnable() {
             @Override
             public void run() {
-                String url="http://192.168.43.200:7001/hazardclearancerecords/update";
+                //String url="http://192.168.43.200:7001/hazardclearancerecords/update";
                 try {
                     if(firstFile!=null&& (hazardClearRecords.getCheckImg()==null || hazardClearRecords.getChangeImg().length()<=0)){
                         getImagePath(firstFile);

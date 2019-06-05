@@ -5,12 +5,10 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.icu.text.SimpleDateFormat;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -19,16 +17,17 @@ import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -42,6 +41,8 @@ import com.zhy.base.fileprovider.FileProvider7;
 import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.MediaType;
@@ -52,8 +53,9 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class AddDangerActivity extends AppCompatActivity {
-    private EditText add_danger_hazardName,add_danger_enterpriseNmae,add_danger_checkerName,add_danger_checkReception;
+    private EditText add_danger_hazardName,add_danger_enterpriseNmae,add_danger_checkerName,add_danger_checkReception,add_danger_inspectionBasis;
     private ImageView add_danger_checkImage;
+    private Spinner add_danger_Spinner;
     private Button add_danger_save;//add_uploadCheckImage;
     HazardClearRecords hazardClearRecords=new HazardClearRecords();
     //private final static int RESULT_LOAD_IMAGE=1;
@@ -70,6 +72,16 @@ public class AddDangerActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_danger);
         initView();
+        List<String> typeSpinnerText=new ArrayList<String>();
+        typeSpinnerText.add("职业健康");
+        typeSpinnerText.add("安全管理");
+        typeSpinnerText.add("特种设备");
+        typeSpinnerText.add("电气安全");
+        typeSpinnerText.add("消防");
+        ArrayAdapter<String> typeText=new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item,typeSpinnerText);
+        //获取后台数据进行展示,
+        typeText.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        add_danger_Spinner.setAdapter(typeText);
         //将得到的图片上传
        /* add_uploadCheckImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -134,6 +146,8 @@ public class AddDangerActivity extends AppCompatActivity {
         add_danger_checkerName=findViewById(R.id.add_danger_checkerName);
         add_danger_checkImage=findViewById(R.id.add_danger_checkImage);
         add_danger_checkReception=findViewById(R.id.add_danger_checkReception);
+        add_danger_inspectionBasis=findViewById(R.id.add_danger_inspectionBasis);
+        add_danger_Spinner=findViewById(R.id.add_danger_Spinner);
         //add_danger_checkTime=findViewById(R.id.add_danger_checkTime);
         add_danger_save=findViewById(R.id.add_danger_save);
         //add_uploadCheckImage=findViewById(R.id.add_uploadCheckImage);
